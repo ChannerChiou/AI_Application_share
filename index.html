@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI 在各領域的應用｜上市公司 × 募資新創 整合名錄</title>
+<meta name="description" content="給高中生家長的 AI 應用指南：醫療、教育、藝術、產業、日常生活。整合台灣/美國上市公司與募資中新創，含痛點、解法、商業模式、投資方。">
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#0f1620; --panel-2:#0c121a;
+    --text:#ecf2ff; --muted:#a9b3c7; --brand:#5de4c7; --brand-2:#7aa2f7; --accent:#c099ff;
+    --ok:#5de4c7; --warn:#ffd166; --bad:#ff6b6b; --border:#1c2430; --chip:#141c27;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:radial-gradient(1200px 1200px at 90% -10%,rgba(122,162,247,.12),transparent 60%),
+              radial-gradient(1200px 1200px at 10% -20%,rgba(93,228,199,.10),transparent 60%),
+              var(--bg); color:var(--text); font:16px/1.55 "Inter","Segoe UI",system-ui,-apple-system,"Noto Sans TC",sans-serif;
+  }
+  header{
+    position:sticky; top:0; z-index:50;
+    background:linear-gradient(180deg, rgba(11,15,20,.95), rgba(11,15,20,.75) 80%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--border);
+  }
+  .wrap{max-width:1200px; margin:0 auto; padding:22px 18px}
+  .title{
+    display:flex; align-items:center; gap:14px; margin-bottom:14px
+  }
+  .logo{width:44px; height:44px}
+  h1{font-size:22px; margin:0; letter-spacing:.2px}
+  .sub{color:var(--muted); font-size:13px}
+
+  .controls{
+    display:grid; gap:12px; grid-template-columns: 1.2fr .8fr .8fr .8fr;
+  }
+  .search{
+    display:flex; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--border);
+    padding:10px 12px; border-radius:12px;
+  }
+  .search svg{flex:0 0 auto; opacity:.8}
+  .search input{
+    background:transparent; border:0; outline:none; color:var(--text); width:100%; font-size:15px;
+  }
+  select, .btn, .chip{
+    appearance:none; border:1px solid var(--border); background:var(--panel); color:var(--text);
+    border-radius:12px; padding:10px 12px; font-size:14px;
+  }
+  .btn{cursor:pointer; transition: .2s transform ease}
+  .btn:hover{transform: translateY(-1px)}
+  .chipbar{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0}
+  .chip{
+    background:var(--chip); cursor:pointer; border:1px solid transparent;
+  }
+  .chip.active{border-color:var(--brand); box-shadow: 0 0 0 2px rgba(93,228,199,.15) inset}
+  .toggles{display:flex; gap:8px; flex-wrap:wrap}
+  .toggle{
+    display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border);
+    padding:8px 10px; border-radius:10px; cursor:pointer; user-select:none
+  }
+  .toggle input{accent-color:var(--brand); width:18px; height:18px}
+
+  main{padding: 18px}
+  .grid{
+    display:grid; gap:14px; grid-template-columns: repeat(12,1fr);
+  }
+  .left{grid-column: span 8}
+  .right{grid-column: span 4}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--border); border-radius:16px; padding:16px; box-shadow:var(--shadow);
+  }
+  .cards{display:grid; gap:12px; grid-template-columns: repeat(auto-fill,minmax(300px,1fr))}
+  .badge{
+    display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-size:12px; letter-spacing:.2px;
+    border:1px solid var(--border); background:rgba(20,28,39,.6)
+  }
+  .badge .dot{width:8px; height:8px; border-radius:50%}
+  .listed .dot{background:var(--brand)}
+  .startup .dot{background:var(--accent)}
+
+  .co-head{display:flex; justify-content:space-between; align-items:baseline; gap:12px}
+  .co-name{font-weight:700; font-size:16px}
+  .co-meta{color:var(--muted); font-size:12px}
+  .co-flags{font-size:16px}
+  .kv{display:grid; grid-template-columns: 1fr; gap:8px; margin-top:10px}
+  .kv p{margin:0; font-size:13px; color:#dbe6ff}
+  .kv b{color:#ffffff}
+  .invest{color:var(--muted); font-size:12px; margin-top:8px}
+  .card-footer{display:flex; justify-content:space-between; align-items:center; margin-top:10px}
+  .tag{font-size:11px; color:#cfe3ff; background:#142033; border:1px solid #1e2d45; padding:4px 8px; border-radius:999px}
+  .cta{font-size:12px; color:#8ccfff; cursor:pointer; border:0; background:transparent}
+  .cta:hover{text-decoration:underline}
+
+  .chart{height:220px}
+  .legend{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
+  .legend .item{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted)}
+  .legend .swatch{width:10px; height:10px; background:var(--brand-2); border-radius:2px}
+
+  .note{color:var(--muted); font-size:12px}
+  .footer{color:var(--muted); font-size:12px; text-align:center; padding:20px 0 40px}
+
+  /* print */
+  @media print{
+    header{position:static; background:transparent; border:0}
+    .right{display:none}
+    .left{grid-column: span 12}
+    .card{break-inside: avoid}
+    .btn,.toggle,.chip,select{border-color:#aaa}
+    body{background:#fff; color:#000}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="title">
+      <!-- SVG Logo -->
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#7aa2f7"/><stop offset="1" stop-color="#5de4c7"/>
+          </linearGradient>
+        </defs>
+        <circle cx="32" cy="32" r="31" fill="none" stroke="url(#g1)" stroke-width="2"/>
+        <path d="M18 36c0-10 7-18 16-18s12 6 12 12-3 8-8 8h-8c-4 0-6 2-6 6" fill="none" stroke="url(#g1)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>AI 在各領域的應用｜上市公司 × 募資新創 名錄</h1>
+        <div class="sub">面向高中生家長的快速導覽：<b>醫療、教育、藝術、產業、日常</b>｜單一檔案 HTML（可離線、可列印）</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search">
+        <!-- search icon -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#8fb0ff" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="#8fb0ff" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="q" type="search" placeholder="搜尋公司、痛點、解法、商業模式…" />
+      </div>
+      <select id="region">
+        <option value="">🌐 全部地區</option>
+        <option value="台灣">🇹🇼 台灣</option>
+        <option value="美國">🇺🇸 美國</option>
+        <option value="德國">🇩🇪 德國</option>
+        <option value="日本">🇯🇵 日本</option>
+      </select>
+      <select id="sort">
+        <option value="name">排序：名稱 A→Z</option>
+        <option value="country">排序：地區</option>
+        <option value="type">排序：類型（上市/新創）</option>
+        <option value="domain">排序：領域</option>
+      </select>
+      <button class="btn" id="exportCsv">匯出目前篩選結果（CSV）</button>
+    </div>
+
+    <div class="chipbar" id="chips">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="toggles">
+      <label class="toggle"><input id="onlyListed" type="checkbox">僅顯示上市公司</label>
+      <label class="toggle"><input id="onlyStartup" type="checkbox">僅顯示募資中新創</label>
+      <span class="note">提示：點擊上方「領域晶片」可多選或取消；關鍵字支援中英混搜。</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <section class="left">
+      <div class="card" style="margin-bottom:14px">
+        <div class="co-head">
+          <div>
+            <div class="co-name">公司清單</div>
+            <div class="co-meta"><span id="count"></span>｜最後更新：<span id="lastUpdated"></span></div>
+          </div>
+          <div>
+            <span class="tag">資料用途：讀書會展示／家長易懂</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="cards" class="cards"></div>
+    </section>
+
+    <aside class="right">
+      <div class="card">
+        <div class="co-head">
+          <div class="co-name">領域分佈（目前篩選）</div>
+          <span class="tag">SVG 圖</span>
+        </div>
+        <svg class="chart" id="chart" viewBox="0 0 420 220" role="img" aria-label="領域分佈長條圖"></svg>
+        <div class="legend" id="legend"></div>
+        <p class="note">解讀：家長可先從人感最強的領域講起（如日常/教育），再帶到醫療與產業。</p>
+      </div>
+
+      <div class="card">
+        <div class="co-head"><div class="co-name">快速講法（1 句話）</div></div>
+        <p class="note">說法模板：<br><b>「痛點 → AI 解法 → 家長感受 → 商業模式」</b><br>例：Abridge＝醫師文書爆量 → 自動生成病歷 → 看診時間更多在病人身上 → 醫院按席位訂閱。</p>
+        <button class="btn" id="copyTip">複製模板</button>
+      </div>
+
+      <div class="card">
+        <div class="co-head"><div class="co-name">資料備註</div></div>
+        <p class="note">輪次/投資方可能快速變動；分享前可將公司名稱保留、上台前 5 分鐘再核對一次最新資訊。此檔為單一 HTML，可離線使用與列印（Ctrl/Cmd + P）。</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">© 2025 — AI 應用讀書會（單一檔案版）。本頁面僅作教育示例，不構成投資建議。</div>
+</main>
+
+<script>
+/* =========================
+   Data
+   ========================= */
+const DOMAINS = [
+  {key:'healthcare', label:'醫療與健康照護', color:'#7aa2f7'},
+  {key:'education',  label:'教育與學習',     color:'#5de4c7'},
+  {key:'arts',       label:'藝術與創作',     color:'#c099ff'},
+  {key:'industry',   label:'產業與工作',     color:'#ffd166'},
+  {key:'daily',      label:'日常生活',       color:'#f26d6d'}
+];
+
+// Helper for flags
+const FLAG = country => ({
+  '台灣':'🇹🇼', '美國':'🇺🇸', '德國':'🇩🇪', '日本':'🇯🇵'
+}[country]||'🌐');
+
+// Dataset:上市與新創整合
+const DATA = [
+  /* -------- 醫療（上市） -------- */
+  {type:'listed', domain:'healthcare', country:'美國', name:'GE HealthCare', ticker:'GEHC',
+   pain:'影像雜訊與讀片工作流繁雜', solution:'AI 影像重建/判讀與流程工具，提升效率與品質',
+   model:'醫材設備 + 影像 AI 軟體授權'},
+  {type:'listed', domain:'healthcare', country:'美國', name:'NVIDIA', ticker:'NVDA',
+   pain:'醫療 AI 計算門檻高、模型落地慢', solution:'Clara / Holoscan / MONAI 平台與 GPU/邊緣模組',
+   model:'硬體 + 平台/SDK 生態授權'},
+  {type:'listed', domain:'healthcare', country:'台灣', name:'iXensor（艾盛）', ticker:'6734.TWO',
+   pain:'居家/臨床檢測成本高且回報慢', solution:'手機相機 × CV 做快篩/婦科/慢病檢測',
+   model:'醫材裝置 + 試劑 + PixoHealth SaaS'},
+  /* -------- 醫療（新創） -------- */
+  {type:'startup', domain:'healthcare', country:'美國', name:'Abridge', round:'Series E',
+   investors:['Andreessen Horowitz (a16z)','General Catalyst','其他'], 
+   pain:'醫師文書負擔沈重', solution:'自動轉寫與重點病歷生成',
+   model:'B2B SaaS（醫院/診所席位或量計費)'},
+  {type:'startup', domain:'healthcare', country:'美國', name:'Hippocratic AI', round:'Series B',
+   investors:['Kleiner Perkins','a16z','General Catalyst','NVIDIA 等'],
+   pain:'醫療客服/隨訪人力不足', solution:'安全語音座席處理提醒/核銷/隨訪',
+   model:'企業合約（每席位/每通話）'},
+  {type:'startup', domain:'healthcare', country:'德國', name:'VARA', round:'近期融資',
+   investors:['IBB Ventures','Smart Family Office'],
+   pain:'乳房攝影判讀量大', solution:'AI 協助讀片與決策支持',
+   model:'按檢查量收費/院所年約'},
+  {type:'startup', domain:'healthcare', country:'日本', name:'Ubie', round:'Series C+',
+   investors:['（例）Google 等策略投資'],
+   pain:'就醫前分流困難', solution:'症狀問答與導流',
+   model:'院所訂閱 + 導流合作'},
+
+  /* -------- 教育（上市） -------- */
+  {type:'listed', domain:'education', country:'美國', name:'Duolingo', ticker:'DUOL',
+   pain:'語言教材產製慢、練習不個人化', solution:'生成式 AI 批量產製與個人化題目',
+   model:'Freemium 訂閱 + 廣告'},
+  {type:'listed', domain:'education', country:'美國', name:'Coursera', ticker:'COUR',
+   pain:'在線課學習陪伴不足', solution:'GenAI 教學助理/口說角色扮演',
+   model:'B2C/B2B 訂閱 + 學費分潤'},
+  {type:'listed', domain:'education', country:'美國', name:'Chegg', ticker:'CHGG',
+   pain:'學生卡關、解題耗時', solution:'CheggMate 個人化出題/解題',
+   model:'訂閱（題庫/作業協助）'},
+  {type:'listed', domain:'education', country:'台灣', name:'宏碁 Acer', ticker:'2353.TW',
+   pain:'師生備課/生成教材耗時', solution:'AI PC / 校園方案與翻譯、摘要工具',
+   model:'硬體 + 校園解決方案'},
+  {type:'listed', domain:'education', country:'台灣', name:'華碩 ASUS', ticker:'2357.TW',
+   pain:'教學與行政負擔', solution:'AI PC / Copilot+ / 本機轉錄字幕',
+   model:'硬體 + 企業/教育方案'},
+
+  /* -------- 教育（新創） -------- */
+  {type:'startup', domain:'education', country:'美國', name:'MagicSchool AI', round:'Series B',
+   investors:['Valor Equity Partners','Bain Capital Ventures','Adobe Ventures 等'],
+   pain:'老師備課/出題/評分時間成本高', solution:'K-12 專用生成工具包',
+   model:'學校/學區年約 + 個人訂閱'},
+  {type:'startup', domain:'education', country:'日本', name:'Life is Tech', round:'Series E',
+   investors:['野村 Crossover Impact Fund（XIF）等'],
+   pain:'中學到大學資訊/AI 教育資源不均', solution:'雲端教材/營隊與師訓',
+   model:'校方年約 + 企業專案'},
+  {type:'startup', domain:'education', country:'德國', name:'paddy', round:'Pre-Seed',
+   investors:['High-Tech Gründerfonds（HTGF）'],
+   pain:'差異化教材製作繁瑣', solution:'AI 教案生成與個別化教材',
+   model:'教師/學校訂閱（DACH 市場）'},
+
+  /* -------- 藝術與創作（上市） -------- */
+  {type:'listed', domain:'arts', country:'美國', name:'Adobe', ticker:'ADBE',
+   pain:'商用素材版權/產出速度', solution:'Firefly 影像/影片/向量生成（可商用）',
+   model:'Creative Cloud/Express 訂閱 + 生成點數'},
+  {type:'listed', domain:'arts', country:'美國', name:'Autodesk', ticker:'ADSK',
+   pain:'設計/製造迭代慢', solution:'AI 助理與生成設計/最佳化（Fusion 等）',
+   model:'SaaS 訂閱/授權'},
+  {type:'listed', domain:'arts', country:'台灣', name:'訊連科技 CyberLink', ticker:'5203.TW',
+   pain:'影音後製/偵測工作量', solution:'FaceMe 系列、影像增強與自動化',
+   model:'B2B SDK/授權 + 軟體訂閱'},
+
+  /* -------- 藝術與創作（新創） -------- */
+  {type:'startup', domain:'arts', country:'美國', name:'Runway', round:'Series D',
+   investors:['General Atlantic','SoftBank','NVIDIA','Fidelity','Baillie Gifford 等'],
+   pain:'高品質影片製作門檻高', solution:'文/圖生影片平台與工作流',
+   model:'創作者訂閱 + 企業授權'},
+  {type:'startup', domain:'arts', country:'德國', name:'Black Forest Labs', round:'募資洽談中',
+   investors:['（傳）a16z','General Catalyst 等'],
+   pain:'品牌/創作者影像生成需求', solution:'生成模型 API 與企業方案',
+   model:'API 計量計費 + 企業授權'},
+  {type:'startup', domain:'arts', country:'日本', name:'Paradigm AI', round:'Seed/Pre-A',
+   investors:['（見日文 PR）'],
+   pain:'虛擬偶像製作成本高', solution:'AI 生成偶像與內容管線',
+   model:'IP 經營 + 品牌合作'},
+
+  /* -------- 產業與工作（上市） -------- */
+  {type:'listed', domain:'industry', country:'美國', name:'Microsoft', ticker:'MSFT',
+   pain:'知識工作時間成本高', solution:'M365 Copilot 寫作/摘要/分析自動化',
+   model:'每用戶加值訂閱'},
+  {type:'listed', domain:'industry', country:'美國', name:'Visa', ticker:'V',
+   pain:'詐欺偵測與風控效率', solution:'生成式 AI 風險評分/即時偵測',
+   model:'刷卡網路費 + 風控服務'},
+  {type:'listed', domain:'industry', country:'台灣', name:'研華 Advantech', ticker:'2395.TW',
+   pain:'設備停機與維保成本', solution:'WISE-PaaS/AIoT 預知維護與監控',
+   model:'工業電腦 + PaaS 授權'},
+  {type:'listed', domain:'industry', country:'台灣', name:'台達電 Delta', ticker:'2308.TW',
+   pain:'良率與能源效率最佳化', solution:'工廠自動化/AI 應用導入',
+   model:'設備銷售 + 專案/維運'},
+  {type:'listed', domain:'industry', country:'台灣', name:'富邦金控', ticker:'2881.TW',
+   pain:'金融詐騙與風控', solution:'聯防偵測與 AI 模型落地',
+   model:'金融本業 + 風控平台'},
+  {type:'listed', domain:'industry', country:'台灣', name:'國泰金控', ticker:'2882.TW',
+   pain:'營運效率/客服負擔', solution:'流程自動化/智能客服',
+   model:'金融本業 + 數位效率'},
+
+  /* -------- 產業與工作（新創） -------- */
+  {type:'startup', domain:'industry', country:'美國', name:'Glean', round:'Series F',
+   investors:['Wellington Management','Khosla','Sequoia','Lightspeed','General Catalyst','IVP 等'],
+   pain:'企業知識分散，LLM 回答缺脈絡', solution:'企業圖譜 + RAG 搜尋與助理',
+   model:'企業年約（依席次/模組）'},
+  {type:'startup', domain:'industry', country:'德國', name:'Aleph Alpha', round:'Series B + 策略投資',
+   investors:['Schwarz Group','SAP','HPE','Bosch 等'],
+   pain:'政府/受監管產業對主權與可解釋需求', solution:'可解釋/可控的基礎模型與專案',
+   model:'專案導入 + 授權'},
+  {type:'startup', domain:'industry', country:'日本', name:'Sakana AI', round:'Series A',
+   investors:['NEA','Khosla','Lux','NVIDIA','MUFG','SMBC','Mizuho','NEC','KDDI 等'],
+   pain:'日語/在地場景的主權型模型需求', solution:'自然靈感的高效模型研發',
+   model:'企業/政府合作與授權'},
+
+  /* -------- 日常生活（上市） -------- */
+  {type:'listed', domain:'daily', country:'美國', name:'Apple', ticker:'AAPL',
+   pain:'一般用戶內容整理/溝通成本', solution:'Apple Intelligence（寫作/影像、Siri 強化）',
+   model:'裝置 + 生態服務'},
+  {type:'listed', domain:'daily', country:'美國', name:'Alphabet / Google', ticker:'GOOGL',
+   pain:'找點/規劃/路況資訊負荷', solution:'Maps × Gemini 摘要與沉浸式路線',
+   model:'廣告 + 雲服務'},
+  {type:'listed', domain:'daily', country:'美國', name:'Tesla', ticker:'TSLA',
+   pain:'駕駛負擔與安全', solution:'FSD（需監督）的輔助駕駛',
+   model:'車輛銷售 + 軟體訂閱'},
+  {type:'listed', domain:'daily', country:'台灣', name:'聯發科 MediaTek', ticker:'2454.TW',
+   pain:'裝置端 AI 延遲與隱私', solution:'Dimensity/邊緣 SoC 提供本機生成式 AI',
+   model:'晶片銷售 + 聯盟方案'},
+
+  /* -------- 日常生活（新創） -------- */
+  {type:'startup', domain:'daily', country:'日本', name:'Notta', round:'Series A+',
+   investors:['Mizuho Leaguer Investment','GSR Ventures 等'],
+   pain:'會議記錄/摘要耗時', solution:'一鍵 AI 轉錄與總結',
+   model:'個人/企業訂閱（含 API）'},
+  {type:'startup', domain:'daily', country:'日本', name:'Godot', round:'Series A',
+   investors:['Dawn Capital（Akatsuki Ventures）','ASICS Ventures 等'],
+   pain:'企業健康促進與行為改變難落地', solution:'行動科學 × AI 的預防與參與方案',
+   model:'政府/企業專案與授權'},
+  {type:'startup', domain:'daily', country:'德國', name:'Faircado', round:'Pre-A',
+   investors:['Wellington Partners','World Fund 等'],
+   pain:'二手購物資訊分散', solution:'AI 比價與瀏覽器助手',
+   model:'導購抽成 + B2B 合作'}
+];
+
+/* =========================
+   State & Rendering
+   ========================= */
+const state = {
+  q:'', region:'', sort:'name',
+  onlyListed:false, onlyStartup:false,
+  domains: new Set(DOMAINS.map(d=>d.key)) // default: all on
+};
+
+const els = {
+  q: document.getElementById('q'),
+  region: document.getElementById('region'),
+  sort: document.getElementById('sort'),
+  export: document.getElementById('exportCsv'),
+  onlyListed: document.getElementById('onlyListed'),
+  onlyStartup: document.getElementById('onlyStartup'),
+  chips: document.getElementById('chips'),
+  cards: document.getElementById('cards'),
+  count: document.getElementById('count'),
+  lastUpdated: document.getElementById('lastUpdated'),
+  chart: document.getElementById('chart'),
+  legend: document.getElementById('legend'),
+  copyTip: document.getElementById('copyTip')
+};
+
+els.lastUpdated.textContent = new Date().toISOString().slice(0,10);
+
+/* Build chips */
+DOMAINS.forEach(d=>{
+  const btn = document.createElement('button');
+  btn.className = 'chip active';
+  btn.dataset.key = d.key;
+  btn.textContent = d.label;
+  btn.onclick = ()=>{
+    if(state.domains.has(d.key)){
+      state.domains.delete(d.key);
+      btn.classList.remove('active');
+    } else {
+      state.domains.add(d.key);
+      btn.classList.add('active');
+    }
+    render();
+  };
+  els.chips.appendChild(btn);
+});
+
+/* Event bindings */
+els.q.addEventListener('input', e=>{state.q=e.target.value.trim().toLowerCase(); render();});
+els.region.addEventListener('change', e=>{state.region=e.target.value; render();});
+els.sort.addEventListener('change', e=>{state.sort=e.target.value; render();});
+els.onlyListed.addEventListener('change', e=>{state.onlyListed=e.target.checked; if(e.target.checked){els.onlyStartup.checked=false; state.onlyStartup=false;} render();});
+els.onlyStartup.addEventListener('change', e=>{state.onlyStartup=e.target.checked; if(e.target.checked){els.onlyListed.checked=false; state.onlyListed=false;} render();});
+els.copyTip.addEventListener('click', ()=>{
+  const t = '說法模板：痛點 → AI 解法 → 家長感受 → 商業模式（例：醫師文書爆量 → 自動生成病歷 → 看診時間更多在病人身上 → 醫院按席位訂閱）';
+  navigator.clipboard.writeText(t); alert('已複製範本到剪貼簿！');
+});
+els.export.addEventListener('click', ()=>{
+  const rows = filtered().map(r=>[
+    r.type, domLabel(r.domain), r.country, r.name,
+    r.ticker||'', r.round||'',
+    (r.investors||[]).join('|'),
+    r.pain, r.solution, r.model
+  ]);
+  const head = ['type','domain','country','name','ticker','round','investors','pain','solution','business_model'];
+  const csv = [head, ...rows].map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download = `AI_company_list_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+
+/* Helpers */
+function domLabel(k){ return (DOMAINS.find(d=>d.key===k)||{}).label || k; }
+function domColor(k){ return (DOMAINS.find(d=>d.key===k)||{}).color || '#8fb0ff'; }
+
+function filtered(){
+  return DATA.filter(r=>{
+    if(state.onlyListed && r.type!=='listed') return false;
+    if(state.onlyStartup && r.type!=='startup') return false;
+    if(!state.domains.has(r.domain)) return false;
+    if(state.region && r.country!==state.region) return false;
+    if(state.q){
+      const s = [r.name,r.ticker,r.round,(r.investors||[]).join(' '),r.pain,r.solution,r.model,domLabel(r.domain),r.country].join(' ').toLowerCase();
+      if(!s.includes(state.q)) return false;
+    }
+    return true;
+  }).sort((a,b)=>{
+    if(state.sort==='name') return a.name.localeCompare(b.name);
+    if(state.sort==='country') return a.country.localeCompare(b.country) || a.name.localeCompare(b.name);
+    if(state.sort==='type') return a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
+    if(state.sort==='domain') return domLabel(a.domain).localeCompare(domLabel(b.domain)) || a.name.localeCompare(b.name);
+    return 0;
+  });
+}
+
+function renderCards(list){
+  els.cards.innerHTML='';
+  list.forEach(r=>{
+    const card = document.createElement('div'); card.className='card';
+    const badgeClass = r.type==='listed' ? 'listed' : 'startup';
+    const typeLabel = r.type==='listed' ? '上市公司' : '募資新創';
+    const metaRight = r.type==='listed'
+        ? (r.ticker ? `代號：${r.ticker}` : '—')
+        : (r.round ? `輪次：${r.round}` : '輪次：—');
+
+    card.innerHTML = `
+      <div class="co-head">
+        <div>
+          <div class="co-name">${r.name}</div>
+          <div class="co-meta">${FLAG(r.country)} ${r.country}｜${domLabel(r.domain)}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+          <span class="badge ${badgeClass}"><span class="dot"></span>${typeLabel}</span>
+          <span class="tag">${metaRight}</span>
+        </div>
+      </div>
+      <div class="kv">
+        <p><b>痛點：</b>${r.pain}</p>
+        <p><b>AI 解法：</b>${r.solution}</p>
+        <p><b>商業模式：</b>${r.model}</p>
+      </div>
+      ${r.type==='startup' && r.investors ? `<div class="invest"><b>主要投資方/大股東：</b>${r.investors.join('、 ')}</div>`:''}
+      <div class="card-footer">
+        <span class="tag">${r.type==='listed' ? 'Ticker' : 'Investors'}｜${r.type==='listed'?(r.ticker||'—'):(r.investors&&r.investors.length?r.investors.length+' 位':'—')}</span>
+        <button class="cta" aria-label="複製卡片摘要">複製摘要</button>
+      </div>
+    `;
+    card.querySelector('.cta').onclick = ()=>{
+      const oneLine = `${r.name}（${r.type==='listed'?(r.ticker||'上市公司'):r.round||'新創'}｜${r.country}｜${domLabel(r.domain)}）— 痛點：${r.pain}；AI 解法：${r.solution}；商業模式：${r.model}${r.type==='startup'&&r.investors?`；投資方：${r.investors.join('、')}`:''}`;
+      navigator.clipboard.writeText(oneLine);
+      card.querySelector('.cta').textContent='✅ 已複製';
+      setTimeout(()=>card.querySelector('.cta').textContent='複製摘要',1200);
+    };
+    els.cards.appendChild(card);
+  });
+  els.count.textContent = `共 ${list.length} 家（符合條件）`;
+}
+
+function renderChart(list){
+  const counts = DOMAINS.map(d=>({key:d.key,label:d.label,color:d.color,count:list.filter(x=>x.domain===d.key).length}));
+  const max = Math.max(1, ...counts.map(c=>c.count));
+  const W=420, H=220, pad=24, bw= (W - pad*2) / counts.length * 0.7, gap=(W - pad*2)/counts.length - bw;
+
+  // axes & bars
+  let svg = `<rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/>`;
+  // axis line
+  svg += `<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#314055" stroke-width="1"/>`;
+
+  counts.forEach((c,i)=>{
+    const x = pad + i*((W - pad*2)/counts.length) + gap/2;
+    const h = Math.round((H - pad*2) * (c.count/max));
+    const y = (H - pad) - h;
+    svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${c.color}" rx="4" ry="4" opacity=".9"/>`;
+    svg += `<text x="${x+bw/2}" y="${H-pad+14}" fill="#a9b3c7" font-size="10" text-anchor="middle">${c.count}</text>`;
+  });
+  els.chart.innerHTML = svg;
+
+  // legend
+  els.legend.innerHTML = '';
+  counts.forEach(c=>{
+    const div = document.createElement('div'); div.className='item';
+    div.innerHTML = `<span class="swatch" style="background:${c.color}"></span>${c.label}`;
+    els.legend.appendChild(div);
+  });
+}
+
+function render(){
+  const list = filtered();
+  renderCards(list);
+  renderChart(list);
+}
+
+render();
+</script>
+</body>
+</html>
